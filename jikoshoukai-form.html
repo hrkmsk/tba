@@ -333,7 +333,7 @@
 <script>
   // ★ここにGASのウェブアプリURLを貼り付けてください★
   // const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxD_PcMMg3Vz2TFwK3AOH8s_G2hzynEs27d7aC2fUEAz58eKiHEfVpX0SDL4GyAvCnt/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbw-K3c2AhlNkcwfgZ9esa6RR4cp7QD6Yi9wCqADpAMomy7PjDLPzWmrwJ0S6R1ppKw9/exec';
   const hobbyEl  = document.getElementById('hobby');
   const counterEl = document.getElementById('hobby-counter');
 
@@ -382,39 +382,40 @@
     return ok;
   }
 
-  async function submitForm() {
-    if (!validate()) return;
+async function submitForm() {
+  if (!validate()) return;
 
-    const btn    = document.getElementById('submit-btn');
-    const btnTxt = document.getElementById('btn-text');
-    const loader = document.getElementById('loader');
+  const btn    = document.getElementById('submit-btn');
+  const btnTxt = document.getElementById('btn-text');
+  const loader = document.getElementById('loader');
 
-    btn.disabled = true;
-    btnTxt.style.display = 'none';
-    loader.style.display = 'block';
+  btn.disabled = true;
+  btnTxt.style.display = 'none';
+  loader.style.display = 'block';
 
-    const payload = {
-      name:    document.getElementById('name').value.trim(),
-      country: document.getElementById('country').value,
-      hobby:   hobbyEl.value.trim(),
-    };
+  const params = new URLSearchParams({
+    name:    document.getElementById('name').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    hobby:   document.getElementById('hobby').value.trim(),
+  });
 
-    try {
-      await fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      document.getElementById('form-area').style.display = 'none';
-      document.getElementById('success-screen').classList.add('show');
-    } catch (e) {
-      alert('送信中にエラーが発生しました。もう一度お試しください。');
-      btn.disabled = false;
-      btnTxt.style.display = '';
-      loader.style.display = 'none';
-    }
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+    document.getElementById('form-area').style.display = 'none';
+    document.getElementById('success-screen').classList.add('show');
+  } catch (e) {
+    alert('送信中にエラーが発生しました。もう一度お試しください。');
+    btn.disabled = false;
+    btnTxt.style.display = '';
+    loader.style.display = 'none';
   }
+}
+
 </script>
 </body>
 </html>
