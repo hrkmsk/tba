@@ -290,7 +290,7 @@
         名前・ニックネーム
         <span class="required">必須</span>
       </label>
-      <input type="text" id="name" placeholder="例：みさき、Misaki、みさみさ" maxlength="50">
+      <input type="text" id="name" placeholder="例：たろう、Taro、T くん" maxlength="50">
       <div class="error-msg" id="name-err">名前・ニックネームを入力してください</div>
     </div>
 
@@ -300,8 +300,40 @@
         出身（国）
         <span class="required">必須</span>
       </label>
-      <input type="text" id="name" placeholder="例：千葉、渋谷区、ミャンマー、インドネシア" maxlength="50">      
-      <div class="error-msg" id="country-err">出身（国）を入力してください</div>
+      <div class="select-wrap">
+        <select id="country">
+          <option value="">選択してください</option>
+          <option>日本</option>
+          <option>中国</option>
+          <option>韓国</option>
+          <option>台湾</option>
+          <option>インド</option>
+          <option>インドネシア</option>
+          <option>タイ</option>
+          <option>ベトナム</option>
+          <option>フィリピン</option>
+          <option>マレーシア</option>
+          <option>ミャンマー</option>
+          <option>カンボジア</option>
+          <option>ネパール</option>
+          <option>バングラデシュ</option>
+          <option>スリランカ</option>
+          <option>パキスタン</option>
+          <option>アメリカ</option>
+          <option>カナダ</option>
+          <option>ブラジル</option>
+          <option>メキシコ</option>
+          <option>イギリス</option>
+          <option>フランス</option>
+          <option>ドイツ</option>
+          <option>イタリア</option>
+          <option>スペイン</option>
+          <option>オーストラリア</option>
+          <option>ニュージーランド</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="error-msg" id="country-err">出身（国）を選択してください</div>
     </div>
 
     <div class="field">
@@ -310,8 +342,8 @@
         休みの日にどんなことをしますか？
         <span class="required">必須</span>
       </label>
-      <textarea id="hobby" placeholder="例：友達とカフェに行ってスイーツを食べたり、家でスマホゲームをしています。最近は無印良品のカレーにはまっています！" maxlength="300"></textarea>
-      <div class="char-counter" id="hobby-counter">20文字以上で入力してください</div>
+      <textarea id="hobby" placeholder="例：友達とカフェ巡りをしたり、家でゲームをしたりしています。最近はキャンプにもはまっています！" maxlength="300"></textarea>
+      <div class="char-counter" id="hobby-counter">0 / 20文字以上で入力してください</div>
       <div class="error-msg" id="hobby-err">20文字以上で具体的に教えてください！</div>
     </div>
 
@@ -332,8 +364,8 @@
 
 <script>
   // ★ここにGASのウェブアプリURLを貼り付けてください★
-  // const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbw-K3c2AhlNkcwfgZ9esa6RR4cp7QD6Yi9wCqADpAMomy7PjDLPzWmrwJ0S6R1ppKw9/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
   const hobbyEl  = document.getElementById('hobby');
   const counterEl = document.getElementById('hobby-counter');
 
@@ -382,40 +414,39 @@
     return ok;
   }
 
-async function submitForm() {
-  if (!validate()) return;
+  async function submitForm() {
+    if (!validate()) return;
 
-  const btn    = document.getElementById('submit-btn');
-  const btnTxt = document.getElementById('btn-text');
-  const loader = document.getElementById('loader');
+    const btn    = document.getElementById('submit-btn');
+    const btnTxt = document.getElementById('btn-text');
+    const loader = document.getElementById('loader');
 
-  btn.disabled = true;
-  btnTxt.style.display = 'none';
-  loader.style.display = 'block';
+    btn.disabled = true;
+    btnTxt.style.display = 'none';
+    loader.style.display = 'block';
 
-  const params = new URLSearchParams({
-    name:    document.getElementById('name').value.trim(),
-    country: document.getElementById('country').value.trim(),
-    hobby:   document.getElementById('hobby').value.trim(),
-  });
+    const payload = {
+      name:    document.getElementById('name').value.trim(),
+      country: document.getElementById('country').value,
+      hobby:   hobbyEl.value.trim(),
+    };
 
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
-    });
-    document.getElementById('form-area').style.display = 'none';
-    document.getElementById('success-screen').classList.add('show');
-  } catch (e) {
-    alert('送信中にエラーが発生しました。もう一度お試しください。');
-    btn.disabled = false;
-    btnTxt.style.display = '';
-    loader.style.display = 'none';
+    try {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('success-screen').classList.add('show');
+    } catch (e) {
+      alert('送信中にエラーが発生しました。もう一度お試しください。');
+      btn.disabled = false;
+      btnTxt.style.display = '';
+      loader.style.display = 'none';
+    }
   }
-}
-
 </script>
 </body>
 </html>
