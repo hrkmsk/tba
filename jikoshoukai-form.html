@@ -300,7 +300,7 @@
         出身（国）
         <span class="required">必須</span>
       </label>
-      <input type="text" id="name" placeholder="例：みさき、Misaki、みさみさ" maxlength="50">      
+      <input type="text" id="name" placeholder="例：千葉、渋谷区、ミャンマー、インドネシア" maxlength="50">      
       <div class="error-msg" id="country-err">出身（国）を入力してください</div>
     </div>
 
@@ -310,8 +310,8 @@
         休みの日にどんなことをしますか？
         <span class="required">必須</span>
       </label>
-      <textarea id="hobby" placeholder="例：友達とカフェ巡りをしたり、家でゲームをしたりしています。最近はキャンプにもはまっています！" maxlength="300"></textarea>
-      <div class="char-counter" id="hobby-counter">0 / 20文字以上で入力してください</div>
+      <textarea id="hobby" placeholder="例：友達とカフェに行ってスイーツを食べたり、家でスマホゲームをしています。最近は無印良品のカレーにはまっています！" maxlength="300"></textarea>
+      <div class="char-counter" id="hobby-counter">20文字以上で入力してください</div>
       <div class="error-msg" id="hobby-err">20文字以上で具体的に教えてください！</div>
     </div>
 
@@ -332,8 +332,8 @@
 
 <script>
   // ★ここにGASのウェブアプリURLを貼り付けてください★
-  const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-
+  // const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxD_PcMMg3Vz2TFwK3AOH8s_G2hzynEs27d7aC2fUEAz58eKiHEfVpX0SDL4GyAvCnt/exec';
   const hobbyEl  = document.getElementById('hobby');
   const counterEl = document.getElementById('hobby-counter');
 
