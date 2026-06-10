@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マイベストランキング</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose: #f2a7b8;
+  --rose-deep: #e07a94;
+  --blush: #fde8ee;
+  --peach: #fde3c8;
+  --cream: #fdf8f4;
+  --sage: #b5c9b7;
+  --sage-light: #e4ede5;
+  --brown: #7a5c50;
+  --brown-light: #a07060;
+  --text: #3d2b24;
+  --muted: #9c7e76;
+  --white: #ffffff;
+  --gold: #d4a843;
+  --silver: #9eaab5;
+  --bronze: #b87553;
+  --shadow: 0 8px 32px rgba(180,100,120,0.12);
+  --shadow-sm: 0 2px 12px rgba(180,100,120,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background decoration */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(242,167,184,0.18) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -150px; left: -150px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(181,201,183,0.2) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+  position: relative; z-index: 1;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 52px 0 36px;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--rose);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+h1 em {
+  font-style: italic;
+  color: var(--rose-deep);
+}
+
+.header-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--rose), transparent);
+}
+.divider span { font-size: 18px; }
+
+/* Form card */
+.form-card {
+  background: white;
+  border-radius: 24px;
+  padding: 36px 32px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(242,167,184,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--rose), var(--peach), var(--sage));
+}
+
+.form-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--brown);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--blush);
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1.5px solid rgba(242,167,184,0.3);
+  border-radius: 14px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--cream);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+  resize: none;
+}
+
+input[type="text"]:focus, textarea:focus {
+  border-color: var(--rose);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(242,167,184,0.15);
+}
+
+.theme-input-wrap { margin-bottom: 28px; }
+
+.rank-inputs { display: flex; flex-direction: column; gap: 16px; }
+
+.rank-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.rank-badge {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.rank-badge.r1 { background: linear-gradient(135deg, #f5e08a, #d4a843); color: white; box-shadow: 0 4px 12px rgba(212,168,67,0.35); }
+.rank-badge.r2 { background: linear-gradient(135deg, #cdd6dd, #9eaab5); color: white; box-shadow: 0 4px 12px rgba(158,170,181,0.35); }
+.rank-badge.r3 { background: linear-gradient(135deg, #d4a07a, #b87553); color: white; box-shadow: 0 4px 12px rgba(184,117,83,0.35); }
+
+.rank-badge small { font-size: 8px; letter-spacing: 0.1em; font-family: 'Zen Kaku Gothic New', sans-serif; font-weight: 400; opacity: 0.8; }
+
+.submit-btn {
+  width: 100%;
+  margin-top: 32px;
+  padding: 17px;
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose));
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 6px 20px rgba(224,122,148,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(224,122,148,0.45); }
+.submit-btn:active { transform: translateY(0); }
+
+/* Result section */
+#result-section { display: none; }
+#result-section.show { display: block; animation: fadeUp 0.5s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-header { text-align: center; margin-bottom: 32px; }
+
+.result-theme {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.result-theme em { font-style: italic; color: var(--rose-deep); }
+
+.result-sub { font-size: 13px; color: var(--muted); }
+
+/* Ranking cards */
+.ranking-cards { display: flex; flex-direction: column; gap: 20px; }
+
+.rank-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(242,167,184,0.15);
+  animation: fadeUp 0.4s ease both;
+}
+
+.rank-card:nth-child(1) { animation-delay: 0.05s; }
+.rank-card:nth-child(2) { animation-delay: 0.12s; }
+.rank-card:nth-child(3) { animation-delay: 0.19s; }
+
+.card-header {
+  padding: 20px 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--blush);
+}
+
+.card-rank-badge {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.card-rank-badge small {
+  font-size: 8px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 400;
+  opacity: 0.85;
+  letter-spacing: 0.1em;
+}
+
+.card-rank-badge.r1 { background: linear-gradient(135deg, #f5e08a, #d4a843); box-shadow: 0 4px 14px rgba(212,168,67,0.4); }
+.card-rank-badge.r2 { background: linear-gradient(135deg, #cdd6dd, #9eaab5); box-shadow: 0 4px 14px rgba(158,170,181,0.4); }
+.card-rank-badge.r3 { background: linear-gradient(135deg, #d4a07a, #b87553); box-shadow: 0 4px 14px rgba(184,117,83,0.4); }
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.3;
+}
+
+/* Crown for 1st */
+.rank-card.first .card-header {
+  background: linear-gradient(135deg, #fffbee, #fef3d0);
+}
+
+/* Memo area */
+.card-body { padding: 20px 24px 24px; }
+
+.memo-display {
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  min-height: 52px;
+  margin-bottom: 16px;
+  position: relative;
+  border: 1.5px dashed rgba(242,167,184,0.4);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.memo-display:hover { border-color: var(--rose); background: white; }
+
+.memo-display.has-content { color: var(--text); border-style: solid; border-color: rgba(242,167,184,0.25); background: white; }
+
+.memo-display .edit-hint {
+  position: absolute;
+  bottom: 10px; right: 14px;
+  font-size: 11px;
+  color: var(--rose);
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.memo-display:hover .edit-hint { opacity: 1; }
+
+.memo-edit-area { display: none; }
+.memo-edit-area.open { display: block; animation: fadeUp 0.2s ease; }
+
+.memo-edit-area textarea {
+  margin-bottom: 10px;
+  min-height: 80px;
+}
+
+.memo-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-save, .btn-cancel {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose));
+  color: white;
+  box-shadow: 0 4px 12px rgba(224,122,148,0.3);
+}
+.btn-save:hover { transform: translateY(-1px); }
+
+.btn-cancel {
+  background: var(--blush);
+  color: var(--rose-deep);
+}
+.btn-cancel:hover { background: var(--rose); color: white; }
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.point-tag {
+  background: var(--blush);
+  color: var(--rose-deep);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.point-tag::before { content: '✦'; font-size: 10px; }
+
+/* Confetti */
+.confetti-wrap {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Reset link */
+.reset-area {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.reset-btn {
+  background: none;
+  border: 1.5px solid rgba(242,167,184,0.5);
+  color: var(--muted);
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reset-btn:hover { border-color: var(--rose); color: var(--rose-deep); }
+
+/* Deco dots */
+.deco-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+.deco-dots span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--rose);
+  opacity: 0.4;
+}
+.deco-dots span:nth-child(2) { background: var(--sage); }
+.deco-dots span:nth-child(3) { background: var(--peach); opacity: 0.6; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-badge">✦ My Ranking ✦</div>
+    <h1>マイ<em>ベスト</em><br>ランキング</h1>
+    <div class="deco-dots"><span></span><span></span><span></span></div>
+    <p class="header-sub">好きなものを1位〜3位でランキングしよう</p>
+  </header>
+
+  <!-- Form -->
+  <div class="form-card" id="form-section">
+    <div class="form-section-title">✦ ランキングを作る</div>
+
+    <div class="theme-input-wrap">
+      <label>テーマ</label>
+      <input type="text" id="theme-input" placeholder="例）好きなコーヒーチェーン、行きたい国..." maxlength="40">
+    </div>
+
+    <div class="rank-inputs">
+      <div class="rank-row">
+        <div class="rank-badge r1">
+          <span>1</span>
+          <small>1ST</small>
+        </div>
+        <div>
+          <label>1位</label>
+          <input type="text" id="rank1-input" placeholder="1番好きなものは？" maxlength="30">
+        </div>
+      </div>
+      <div class="rank-row">
+        <div class="rank-badge r2">
+          <span>2</span>
+          <small>2ND</small>
+        </div>
+        <div>
+          <label>2位</label>
+          <input type="text" id="rank2-input" placeholder="2番目は？" maxlength="30">
+        </div>
+      </div>
+      <div class="rank-row">
+        <div class="rank-badge r3">
+          <span>3</span>
+          <small>3RD</small>
+        </div>
+        <div>
+          <label>3位</label>
+          <input type="text" id="rank3-input" placeholder="3番目は？" maxlength="30">
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="createRanking()">
+      ✦ ランキングを作成する
+    </button>
+  </div>
+
+  <div class="divider"><span>🌸</span></div>
+
+  <!-- Result -->
+  <div id="result-section">
+    <div class="result-header">
+      <div class="result-theme" id="result-theme-title"></div>
+      <p class="result-sub">タップしておすすめポイントを追記できます</p>
+    </div>
+
+    <div class="ranking-cards" id="ranking-cards"></div>
+
+    <div class="reset-area">
+      <button class="reset-btn" onclick="resetRanking()">🔄 新しくランキングを作る</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confetti container -->
+<div class="confetti-wrap" id="confetti"></div>
+
+<script>
+const RANK_LABELS = ['1ST', '2ND', '3RD'];
+const RANK_EMOJIS = ['👑', '✨', '🌸'];
+const PLACEHOLDER_MEMOS = [
+  'おすすめポイントをメモしよう... ✍️',
+  'ここがポイント！という点を書いてね ✦',
+  '一言コメントを追加しよう 🌸',
+];
+
+let memos = ['', '', ''];
+
+function createRanking() {
+  const theme = document.getElementById('theme-input').value.trim();
+  const r1 = document.getElementById('rank1-input').value.trim();
+  const r2 = document.getElementById('rank2-input').value.trim();
+  const r3 = document.getElementById('rank3-input').value.trim();
+
+  if (!theme || !r1 || !r2 || !r3) {
+    shake(document.querySelector('.form-card'));
+    return;
+  }
+
+  document.getElementById('result-theme-title').innerHTML =
+    `<em>${theme}</em><br>わたしのベスト3`;
+
+  const items = [r1, r2, r3];
+  const container = document.getElementById('ranking-cards');
+  container.innerHTML = '';
+  memos = ['', '', ''];
+
+  items.forEach((item, i) => {
+    const card = buildCard(i, item);
+    container.appendChild(card);
+  });
+
+  const result = document.getElementById('result-section');
+  result.classList.add('show');
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  launchConfetti();
+}
+
+function buildCard(i, name) {
+  const rankClass = ['first', 'second', 'third'][i];
+  const badgeClass = `r${i + 1}`;
+  const label = RANK_LABELS[i];
+  const emoji = RANK_EMOJIS[i];
+
+  const card = document.createElement('div');
+  card.className = `rank-card ${rankClass}`;
+  card.dataset.index = i;
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="card-rank-badge ${badgeClass}">
+        <span>${i + 1}</span>
+        <small>${label}</small>
+      </div>
+      <div class="card-title">${emoji} ${escHtml(name)}</div>
+    </div>
+    <div class="card-body">
+      <div class="memo-display" onclick="openEdit(${i})" title="クリックして編集">
+        <span class="memo-text">おすすめポイントをメモしよう... ✍️</span>
+        <span class="edit-hint">✏️ 追記する</span>
+      </div>
+      <div class="memo-edit-area" id="edit-area-${i}">
+        <textarea id="memo-textarea-${i}" placeholder="おすすめポイント、使ってみた感想、好きな理由など..." rows="3"></textarea>
+        <div class="memo-actions">
+          <button class="btn-cancel" onclick="closeEdit(${i})">キャンセル</button>
+          <button class="btn-save" onclick="saveMemo(${i})">✦ 保存する</button>
+        </div>
+      </div>
+      <div class="tag-list" id="tags-${i}"></div>
+    </div>
+  `;
+  return card;
+}
+
+function openEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  const ta = document.getElementById(`memo-textarea-${i}`);
+  area.classList.add('open');
+  ta.value = memos[i];
+  ta.focus();
+
+  const card = document.querySelector(`.rank-card[data-index="${i}"] .memo-display`);
+  card.style.display = 'none';
+}
+
+function closeEdit(i) {
+  const area = document.getElementById(`edit-area-${i}`);
+  area.classList.remove('open');
+  const display = document.querySelector(`.rank-card[data-index="${i}"] .memo-display`);
+  display.style.display = '';
+}
+
+function saveMemo(i) {
+  const ta = document.getElementById(`memo-textarea-${i}`);
+  const text = ta.value.trim();
+  memos[i] = text;
+
+  const display = document.querySelector(`.rank-card[data-index="${i}"] .memo-display`);
+  const memoText = display.querySelector('.memo-text');
+
+  if (text) {
+    memoText.textContent = text;
+    display.classList.add('has-content');
+    renderTags(i, text);
+  } else {
+    memoText.textContent = 'おすすめポイントをメモしよう... ✍️';
+    display.classList.remove('has-content');
+    document.getElementById(`tags-${i}`).innerHTML = '';
+  }
+
+  closeEdit(i);
+}
+
+function renderTags(i, text) {
+  const tagContainer = document.getElementById(`tags-${i}`);
+  const words = text.match(/[！？!?]?[\S]{2,8}/g) || [];
+  const tags = words.filter((_, idx) => idx < 4);
+  tagContainer.innerHTML = tags.map(t =>
+    `<span class="point-tag">${escHtml(t)}</span>`
+  ).join('');
+}
+
+function resetRanking() {
+  document.getElementById('theme-input').value = '';
+  document.getElementById('rank1-input').value = '';
+  document.getElementById('rank2-input').value = '';
+  document.getElementById('rank3-input').value = '';
+  document.getElementById('result-section').classList.remove('show');
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function shake(el) {
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.4s ease';
+  setTimeout(() => el.style.animation = '', 500);
+}
+
+function launchConfetti() {
+  const wrap = document.getElementById('confetti');
+  wrap.innerHTML = '';
+  const colors = ['#f2a7b8','#fde8ee','#d4a843','#b5c9b7','#06b6d4','#f5e08a','#e07a94'];
+  const shapes = [0, 2, 4, 50]; // border-radius values
+
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const left = Math.random() * 100;
+    const size = 5 + Math.random() * 8;
+    const delay = Math.random() * 1.2;
+    const dur = 1.5 + Math.random() * 1.5;
+    const br = shapes[Math.floor(Math.random() * shapes.length)];
+    el.style.cssText = `
+      left:${left}%;
+      background:${color};
+      width:${size}px;
+      height:${size}px;
+      border-radius:${br}%;
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+    `;
+    wrap.appendChild(el);
+  }
+  setTimeout(() => { wrap.innerHTML = ''; }, 3500);
+}
+
+// shake keyframes injection
+const style = document.createElement('style');
+style.textContent = `@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+}`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
